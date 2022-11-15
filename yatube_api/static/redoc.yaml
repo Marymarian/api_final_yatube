@@ -27,24 +27,47 @@ paths:
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/GetPost'
+                type: object
+                properties:
+                  count:
+                    type: integer
+                    example: 123
+                  next:
+                    type: string
+                    nullable: true
+                    format: uri
+                    example: 'http://api.example.org/accounts/?offset=400&limit=100'
+                  previous:
+                    type: string
+                    nullable: true
+                    format: uri
+                    example: 'http://api.example.org/accounts/?offset=200&limit=100'
+                  results:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Post'
               examples:
-                Ответ с пагинацией:
+                Без пагинации:
+                  value:
+                    - id: 0
+                      author: string
+                      text: string
+                      pub_date: '2019-08-24T14:15:22Z'
+                      image: string
+                      group: 0
+                С пагинацией:
                   value:
                     count: 123
-                    next: http://api.example.org/accounts/?offset=400&limit=100
-                    previous: http://api.example.org/accounts/?offset=200&limit=100
+                    next: 'http://api.example.org/accounts/?offset=400&limit=100'
+                    previous: 'http://api.example.org/accounts/?offset=200&limit=100'
                     results:
-                      -
-                        id: 0
+                      - id: 0
                         author: string
                         text: string
-                        pub_date: 2021-10-14T20:41:29.648Z
+                        pub_date: '2019-08-24T14:15:22Z'
                         image: string
-                        group: 0            
-          description: Удачное выполнение запроса без пагинации
+                        group: 0
+          description: Удачное выполнение запроса
       tags:
         - api
     post:
@@ -700,7 +723,7 @@ paths:
                 Пользователь не существует:
                   value:
                     following:
-                      - Объект с username=... не существует.
+                      - Пользователь с username=... не существует.
                 Подписка на себя:
                   value:
                     following:
@@ -735,11 +758,11 @@ paths:
             schema:
               $ref: '#/components/schemas/TokenObtainPair'
       responses:
-        '200':
+        '201':
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Token'
+                $ref: '#/components/schemas/TokenObtainPair'
           description: Удачное выполнение запроса
         '400':
           content:
@@ -779,11 +802,11 @@ paths:
             schema:
               $ref: '#/components/schemas/TokenRefresh'
       responses:
-        '200':
+        '201':
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/TokenRefresh2'
+                $ref: '#/components/schemas/TokenRefresh'
           description: Удачное выполнение запроса
         '400':
           content:
@@ -822,7 +845,11 @@ paths:
             schema:
               $ref: '#/components/schemas/TokenVerify'
       responses:
-        '200':
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TokenVerify'
           description: Удачное выполнение запроса
         '400':
           content:
@@ -851,15 +878,12 @@ components:
       properties:
         id:
           type: integer
-          title: id публикации
           readOnly: true
         author:
           type: string
-          title: username пользователя
           readOnly: true
         text:
           type: string
-          title: текст публикации
         pub_date:
           type: string
           format: date-time
@@ -870,57 +894,26 @@ components:
           nullable: true
         group:
           type: integer
-          title: id сообщества
           nullable: true
       required:
         - text
-    GetPost:
-      type: object
-      properties:
-        id:
-          type: integer
-          title: id публикации
-          readOnly: true
-        author:
-          type: string
-          title: username пользователя
-          readOnly: true
-        text:
-          type: string
-          title: текст публикации
-        pub_date:
-          type: string
-          format: date-time
-          readOnly: true
-        image:
-          type: string
-          format: binary
-          nullable: true
-        group:
-          type: integer
-          title: id сообщества
-          nullable: true
     Comment:
       type: object
       properties:
         id:
           type: integer
-          title: id комментария
           readOnly: true
         author:
           type: string
-          title: username пользователя
           readOnly: true
         text:
           type: string
-          title: текст комментария
         created:
           type: string
           format: date-time
           readOnly: true
         post:
           type: integer
-          title: id публикации
           readOnly: true
       required:
         - text
@@ -948,11 +941,9 @@ components:
       properties:
         user:
           type: string
-          title: username владелец токена
           readOnly: true
         following:
           type: string
-          title: username
       required:
         - following
     TokenObtainPair:
@@ -966,16 +957,6 @@ components:
       required:
         - username
         - password
-    Token:
-      title: Токен
-      type: object
-      properties:
-        refresh:
-          type: string
-          title: refresh токен
-        access:
-          type: string
-          title: access токен
     TokenRefresh:
       type: object
       properties:
@@ -993,8 +974,3 @@ components:
           type: string
       required:
         - token
-    TokenRefresh2:
-      type: object
-      properties:
-        access:
-          type: string

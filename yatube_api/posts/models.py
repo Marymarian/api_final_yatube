@@ -10,7 +10,7 @@ class Group(models.Model):
     description = models.TextField()
 
     def __str__(self):
-        return str(self.title)
+        return self.title
 
 
 class Post(models.Model):
@@ -20,6 +20,11 @@ class Post(models.Model):
         User, on_delete=models.CASCADE, related_name='posts')
     image = models.ImageField(
         upload_to='posts/', null=True, blank=True)
+    group = models.ForeignKey(Group,
+                              on_delete=models.SET_NULL,
+                              related_name='posts',
+                              blank=True,
+                              null=True,)
 
     def __str__(self):
         return self.text
@@ -27,32 +32,37 @@ class Post(models.Model):
 
 class Comment(models.Model):
     author = models.ForeignKey(
-        User, on_delete=models.CASCADE, related_name='comments')
+        User, on_delete=models.CASCADE, related_name='comments'
+    )
     post = models.ForeignKey(
-        Post, on_delete=models.CASCADE, related_name='comments')
+        Post, on_delete=models.CASCADE, related_name='comments'
+    )
     text = models.TextField()
     created = models.DateTimeField(
-        'Дата добавления', auto_now_add=True, db_index=True)
+        'Дата добавления', auto_now_add=True, db_index=True
+    )
+
+    def __str__(self):
+        return '"{}" to post "{}" by author "{}"'.format(self.text,
+                                                         self.post,
+                                                         self.author)
 
 
 class Follow(models.Model):
     user = models.ForeignKey(
-        User,
-        on_delete=models.CASCADE,
+        User, on_delete=models.CASCADE, null=True, blank=True,
         related_name='follower'
     )
-    author = models.ForeignKey(
-        User,
-        on_delete=models.CASCADE,
+    following = models.ForeignKey(
+        User, on_delete=models.CASCADE, null=True, blank=True,
         related_name='following'
     )
 
     class Meta:
-        constraints = (
-            models.UniqueConstraint(
-                fields=('user', 'author',), name='unique_following'
-            ),
-        )
+        constraints = [
+            models.UniqueConstraint(fields=['user', 'following'],
+                                    name='unique_user_subscribers')
+        ]
 
     def __str__(self):
-        return str(self.user)
+        return '{} follows {}'.format(self.user, self.following)
