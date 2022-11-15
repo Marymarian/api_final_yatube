@@ -4,7 +4,9 @@ from rest_framework import serializers
 
 class PostSerializer(serializers.ModelSerializer):
     """Сериализация объектов типа Post."""
-    author = serializers.SlugRelatedField(slug_field='username', read_only=True)
+    author = serializers.SlugRelatedField(
+        slug_field='username', read_only=True
+    )
 
     class Meta:
         fields = '__all__'
@@ -56,7 +58,5 @@ class FollowSerializer(serializers.ModelSerializer):
     def validate(self, data):
         """Невозможно подписаться на самого себя."""
         if data['user'] == data['following']:
-            raise serializers.ValidationError(
-                'Нельзя подписаться на себя!'
-            )
+            raise serializers.ValidationError('Нельзя подписаться на себя!')
         return data
