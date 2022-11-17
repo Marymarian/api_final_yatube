@@ -20,4 +20,3 @@ urlpatterns = [
     path('v1/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('v1/token/refresh/', TokenRefreshView.as_view, name='token_refresh')
 ]
-
