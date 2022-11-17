@@ -16,11 +16,11 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'djoser',
     'rest_framework',
     'django_filters',
-    'djoser',
-    'api',
     'posts',
+    'api',
 ]
 
 MIDDLEWARE = [
