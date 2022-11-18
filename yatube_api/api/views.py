@@ -11,14 +11,6 @@ from .serializers import GroupSerializer, PostSerializer
 from rest_framework import mixins
 
 
-class MyListCreateViewSet(
-    mixins.ListModelMixin,
-    mixins.CreateModelMixin,
-    viewsets.GenericViewSet
-):
-    pass
-
-
 class PostViewSet(viewsets.ModelViewSet):
     queryset = Post.objects.all()
     serializer_class = PostSerializer
@@ -53,7 +45,7 @@ class GroupViewSet(viewsets.ModelViewSet):
         return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
 
 
-class FollowViewSet(MyListCreateViewSet):
+class FollowViewSet( mixins.ListModelMixin, mixins.CreateModelMixin, viewsets.GenericViewSet):
     http_method_names = ['get', 'post']
     permission_classes = (permissions.IsAuthenticated,)
     serializer_class = FollowSerializer
