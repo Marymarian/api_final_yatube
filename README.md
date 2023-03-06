@@ -41,3 +41,9 @@ python manage.py runserver
 # Примеры
 
 Для доступа к API необходимо получить токен, передав токен можно будет обращаться к методам, например: /api/v1/posts/ (GET, POST, PUT, PATCH, DELETE)
+
+# Технологии
+Python 3.7, Django 2.2.19, Django Rest Framework 3.12.4
+
+# Авторы
+Марина Чухарева
